@@ -1,0 +1,41 @@
+import telebot
+from telebot import types
+
+
+TOKEN = '6355406237:AAGHNv4wlC3Z5xV62qdQhoGMXUjWhgl7uGw'
+bot = telebot.TeleBot(TOKEN)
+
+
+#start
+@bot.message_handler(commands=['start'])
+def start(message):
+    firstButton = types.InlineKeyboardMarkup(row_width=1)
+    cool = types.InlineKeyboardButton('здорово!', callback_data='answer_cool')
+    firstButton.add(cool)
+
+    bot.send_message(message.chat.id, 'Добро пожаловать в StudentSearch! Здесь Вы сможете найти контакты студентов нужных Вам вузов и задать интересующие Вас вопросы.', reply_markup=firstButton)
+
+
+#buttons
+@bot.callback_query_handler(func=lambda call:True)
+def callback(call):
+    if call.message:
+        if call.data == 'answer_cool':
+
+            secondButtons = types.InlineKeyboardMarkup(row_width=2)
+            student = types.InlineKeyboardButton('Я студент', callback_data='answer_student')
+            schoolboy = types.InlineKeyboardButton('Я ученик', callback_data='answer_schoolboy')
+            secondButtons.add(student, schoolboy)
+
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.chat.id, text='Теперь определимся с тем, кто Вы')
+
+            if call.data == 'answer_studen':
+
+                thirdButtons = types.InlineKeyboardMarkup(row_width=2)
+                mfti = types.InlineKeyboardButton('МФТИ', callback_data='answer_mfti')
+                itmo = types.InlineKeyboardButton('ИТМО', callback_data='answer_itmo')
+                baumanka = types.InlineKeyboardButton('Бауманка', callback_data='answer_baumanka')
+                vsh = types.InlineKeyboardButton('ВШЭ', callback_data='answer_vsh')
+                thirdButtons.add(mfti, itmo, baumanka, vsh)
+
+bot.polling()
